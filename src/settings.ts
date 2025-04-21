@@ -18,13 +18,36 @@ app.use(express.urlencoded({ extended: true }));
 app.use(httpMethodsCheckMiddleware);
 app.use(cookieParser());
 
-app.use('/blogs', blogRoute)
-app.use('/posts', postRoute)
-app.use('/testing', testingRouter)
-app.use('/auth', authRouter)
-app.use('/users', usersRouter)
-app.use('/comments', commentsRoute)
-app.use('/', emailRouter)
-app.use(async (req: Request, res: Response, next: NextFunction) => {
-    next(StatusCodes.NOT_FOUND);
+// Обработка favicon
+app.get('/favicon.ico', (req, res) => {
+    res.status(204).end();
+});
+
+app.get('/favicon.png', (req, res) => {
+    res.status(204).end();
+});
+
+// Корневой маршрут
+app.get('/', (req, res) => {
+    res.status(200).send('API is working!');
+});
+
+// API маршруты
+app.use('/blogs', blogRoute);
+app.use('/posts', postRoute);
+app.use('/testing', testingRouter);
+app.use('/auth', authRouter);
+app.use('/users', usersRouter);
+app.use('/comments', commentsRoute);
+app.use('/email', emailRouter);
+
+// Обработка 404
+app.use((req: Request, res: Response) => {
+    res.status(StatusCodes.NOT_FOUND).send('Not Found');
+});
+
+// Обработка ошибок
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+    console.error(err.stack);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Something broke!');
 });
