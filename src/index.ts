@@ -6,14 +6,22 @@ dotenv.config();
 
 app.get('/', (req, res) => {
     res.send('API is working!');
+    res.status(200).send('API is working!');
 });
-
+app.use((req, res) => {
+    res.status(404).send('Not Found');
+});
 const startApp = async () => {
-    await runDB();
-    const port = process.env.PORT || 5001;
-    app.listen(port, () => {
-        console.log(`Server is running on port ${port}`);
-    });
+    try {
+        await runDB();
+        const port = process.env.PORT || 5001;
+        app.listen(port, () => {
+            console.log(`Server is running on port ${port}`);
+        });
+    } catch (error) {
+        console.error('Failed to start server:', error);
+        process.exit(1);
+    }
 };
 
 // Запуск только если файл запущен напрямую

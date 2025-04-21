@@ -1,7 +1,7 @@
 {
-  "name": "3back",
+  "name": "sprint02week4",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.ts",
   "license": "MIT",
   "dependencies": {
     "@types/date-fns": "^2.6.0",
