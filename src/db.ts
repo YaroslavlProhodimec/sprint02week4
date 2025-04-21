@@ -7,16 +7,10 @@ import { CommentDBType } from "./dto/commentsDTO/commentsDTO";
 import { RefreshTokensBlacklistDB } from "./dto/authDTO/authDTO";
 import {BlogType} from "./types/blog/output";
 import {PostType} from "./types/post/output";
-import {app} from "./settings";
 dotenv.config();
-const mongoURI = process.env.MONGO_URL || 'mongodb://localhost:27017'
-console.log(mongoURI,'mongoURI')
+export const mongoURI = process.env.MONGO_URL || 'mongodb://localhost:27017';
+export const client = new MongoClient(mongoURI);
 
-const client = new MongoClient(mongoURI);
-
-app.get('/', (req, res) => {
-    res.send('API is working!')
-})
 
 
 
@@ -30,17 +24,31 @@ export const usersCollection = dbBlogs.collection<any>('users')
 export const refreshTokensBlacklistedCollection =
     dbBlogs.collection<RefreshTokensBlacklistDB>("refresh-tokens-blacklisted");
 
-export const runDB = async () => {
+let dbInitialized = false;
+
+export async function runDB() {
+    if (dbInitialized) return;
+
     try {
         await client.connect();
         console.log("Connected successfully to mongo server");
         await dbBlogs.command({ ping: 1 });
         console.log("Client connected");
     } catch (e) {
-        console.log("Can't connect to DB: ", e);
-        await client.close();
+        console.error('Failed to connect to MongoDB:', e)
+        await client.close()
     }
-};
+}
 
 
-export default app
+// export const runDB = async () => {
+//     try {
+//         await client.connect();
+//         console.log("Connected successfully to mongo server");
+//         await dbBlogs.command({ ping: 1 });
+//         console.log("Client connected");
+//     } catch (e) {
+//         console.log("Can't connect to DB: ", e);
+//         await client.close();
+//     }
+// };
