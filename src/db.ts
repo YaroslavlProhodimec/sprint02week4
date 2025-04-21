@@ -7,10 +7,18 @@ import { CommentDBType } from "./dto/commentsDTO/commentsDTO";
 import { RefreshTokensBlacklistDB } from "./dto/authDTO/authDTO";
 import {BlogType} from "./types/blog/output";
 import {PostType} from "./types/post/output";
+import {app} from "./settings";
 dotenv.config();
-export const mongoURI = process.env.MONGO_URL
+const mongoURI = process.env.MONGO_URL || 'mongodb://localhost:27017'
+console.log(mongoURI,'mongoURI')
 
-export const client = new MongoClient(mongoURI as string);
+const client = new MongoClient(mongoURI);
+
+app.get('/', (req, res) => {
+    res.send('API is working!')
+})
+
+
 
 const dbName = "blogs-posts";
 export const dbBlogs = client.db('node-blogs')
@@ -33,3 +41,6 @@ export const runDB = async () => {
         await client.close();
     }
 };
+
+
+export default app
